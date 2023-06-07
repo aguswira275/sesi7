@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hapus Data</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <style>
+        body {
+          height: 100vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap :50px;
+        }
+  
+        form {
+          width: 90%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+      </style>
+</head>
+<body>
+    
+
+    <h3>Hapus Data User</h3>
+    <form>
+        <div class="mb-3">
+          <label for="txNAMA" class="form-label">Nama Lengkap</label>
+          <input type="text" class="form-control" id="txNAMA" aria-describedby="emailHelp">
+        </div>
+
+        <div class="mb-3">
+          <label for="txEMAIL" class="form-label">Email</label>
+          <input type="email" class="form-control" id="txEMAIL">
+        </div>
+        
+        <div class="mb-3">
+          <label for="txUSERNAME" class="form-label">User Name</label>
+          <input type="text" class="form-control" id="txUSERNAME">
+        </div>
+
+        <div class="mb-3">
+          <label for="txPASS1" class="form-label">Password</label>
+          <input type="password" class="form-control" id="txPASS1">
+        </div>
+
+        <div class="mb-3">
+          <label for="txPASS2" class="form-label">Verifikasi Password</label>
+          <input type="password" class="form-control" id="txPASS2">
+        </div>
+
+        <button type="button" onclick="Destroydata()" class="btn btn-danger">Hapus Data</button>
+      </form>
+      <script>
+        const storedata = new XMLHttpRequest();
+        caridata();
+
+        function caridata(){
+            const qs = window.location.search;
+            const usp = new URLSearchParams(qs);
+            let iduser = usp.get("id");
+            let target = "https://webpro.ptov.my.id/api/curduser.php?aksi=get&q="+iduser;
+            storedata.open("GET", target, true);
+            storedata.onload = function(){
+                const gdta = JSON.parse(this.responseText);
+                console.log(gdta);
+                document.getElementById("txNAMA").value = gdta.isi[0][0];
+                document.getElementById("txEMAIL").value = gdta.isi[0][1];
+                document.getElementById("txUSERNAME").value = gdta.isi[0][2];
+            }
+            storedata.send();
+            
+        }
+        function Destroydata(){
+            const qs = window.location.search;
+            const usp = new URLSearchParams(qs);
+            let iduser = usp.get("id");
+            
+            let target = 'https://webpro.ptov.my.id/api/curduser.php?aksi=destroy';
+            let params = "iduser="+iduser;
+            
+            storedata.open("POST", target, true);
+            storedata.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            storedata.send(params);
+            
+            storedata.onload = function(){
+                const gdta = JSON.parse(this.responseText);
+                if(gdta.error == 0){
+                    setTimeout("window.location.href='latih01.html'", 2000);
+                }
+            }
+        }
+      </script>
+</body>
+</html>
